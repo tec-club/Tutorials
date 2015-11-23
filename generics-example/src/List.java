@@ -9,6 +9,7 @@
  * size() -> O(1)
  * get() ->  O(1)
  * add()  -> O(1)
+ * add(int index)  -> O(N) because of insertion
  * contains()-> O(N)
  */
 public class List<T> {
@@ -48,12 +49,6 @@ public class List<T> {
 
     /**
      * *****NOTICE*******
-     * I've decided to comment out the following add methods that used an insertion
-     * implementation in favor of a more memory consuming, yet faster add method
-     * that comes from keeping the length of contents larger than the capacity of
-     * elements.
-     * <p/>
-     * <p/>
      * Conceptually, this method partitions the contents array into two separate parts,
      * before and after the specified insertion index. It copies the first part to a new array
      * (from 0 to index-1) and then inserts the specified element at (index). It then copies the
