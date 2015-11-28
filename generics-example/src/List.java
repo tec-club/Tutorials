@@ -13,7 +13,7 @@
  * contains()-> O(N)
  */
 public class List<T> {
-    final static int MIN_CAPACITY = 10;
+    private final static int MIN_CAPACITY = 10;
     private T[] contents;
     private int numElements;
 
@@ -61,16 +61,17 @@ public class List<T> {
      * @param element Element to be inserted
      * @return True if successful, false if an exception occurred
      */
-    public boolean add(int index, T element) throws ArrayIndexOutOfBoundsException {
+    public boolean add(T element, int index) throws ArrayIndexOutOfBoundsException {
         ensureContentSize();
         if (index > numElements || index < 0)
             throw new ArrayIndexOutOfBoundsException();
 
         T[] newContents = (T[]) (new Object[contents.length + 1]);
-        arrayCopy(0, index - 1, 0, contents, newContents);
+        arrayCopy(0, index, 0, contents, newContents);
         newContents[index] = element;
-        arrayCopy(index, numElements, index + 1, contents, newContents);
+        arrayCopy(index, numElements, index, contents, newContents);
         contents = newContents;
+        numElements++;
         return true;
     }
 
@@ -79,6 +80,7 @@ public class List<T> {
      * assumes you are appending to the end of the list
      */
     public boolean add(T element) {
+        ensureContentSize();
         contents[numElements++] = element;
         //The ++ returns the value of numElements, and then increments
         //it to keep track
@@ -107,7 +109,7 @@ public class List<T> {
         T elem = contents[index];
         arrayCopy(0, index - 1, 0, contents, newArray);
         arrayCopy(index + 1, numElements, index, contents, newArray);
-
+        numElements--;
         return elem;
     }
 
@@ -116,7 +118,7 @@ public class List<T> {
      * @param element Element to replace old element with
      * @return The old element
      */
-    public T set(int index, T element) {
+    public T set(T element, int index) {
         T temp = contents[index];
         contents[index] = element;
         return temp;
@@ -129,7 +131,7 @@ public class List<T> {
      * is faster, but comes with downside of consuming roughly twice
      * as much memory
      */
-    public void ensureContentSize() {
+    protected void ensureContentSize() {
         if (contents.length < numElements * 2) {
             T[] newArray = (T[]) (new Object[numElements * 2]);
             arrayCopy(0, numElements, 0, contents, newArray);
@@ -141,26 +143,26 @@ public class List<T> {
     }
 
     /**
-     *
-     * @param start Index to start copying from
-     * @param end Index to end copying from
+     * @param start   Index to start copying from
+     * @param end     Index to end copying from
      * @param toStart Index to start copying to
-     * @param from Array to copy from
-     * @param to Array to copy to
+     * @param from    Array to copy from
+     * @param to      Array to copy to
      * @throws ArrayIndexOutOfBoundsException If any indices are out of either array bounds, or if
      */
-    public void arrayCopy(int start, int end, int toStart, T[] from, T[] to) throws ArrayIndexOutOfBoundsException {
-        if (start > end || end > from.length - 1 || start < 0 || (end-start)+toStart>to.length
+    protected void arrayCopy(int start, int end, int toStart, T[] from, T[] to) throws ArrayIndexOutOfBoundsException {
+        if (start > end || end > from.length || start < 0 || (end - start) + toStart > to.length
                 || toStart < 0 || toStart > to.length - 1)
             throw new ArrayIndexOutOfBoundsException();
 
         for (int i = start; i < end; i++) {
-            to[i] = from[i];
+            to[i + toStart] = from[i];
         }
     }
 
-    public void arrayCopy(int start, int toStart, T[] from, T[] to) {
+    protected void arrayCopy(int start, int toStart, T[] from, T[] to) {
         arrayCopy(start, from.length - 1, toStart, from, to);
     }
+
 
 }
